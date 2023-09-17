@@ -1,0 +1,5 @@
+test/build
+.vscode 
+lib
+bin
+build
