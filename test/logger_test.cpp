@@ -11,6 +11,7 @@ void log() {
   logger.warningf("Congratulations! No Warnings");
   logger.debugf("Congratulations! No Bugs");
   logger.errorf("Congratulations! No Errors");
+  ASSERT_EQ(1, 2) << "Vectors 1 and 1 are of unequal length";
 }
 TEST(Logger, testLogger) { log(); }
 

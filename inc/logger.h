@@ -94,6 +94,13 @@ public:
   }
 };
 
+enum Color {
+  RED,
+  BLUE,
+  GREEN,
+  YELLOW,
+};
+
 class Logger {
 public:
   static Logger &get_instance() {
@@ -109,6 +116,7 @@ public:
   void init();
   void write_log(std::string_view);
   void set_log_level(LEVEL level);
+  void set_color(string &origin, Color colors);
   ~Logger() { lw->flush(); }
 
 private:
@@ -127,6 +135,7 @@ void Logger::errorf(std::string_view s, Args... args) {
     string input(s);
     auto tmstr = Timer::get_instance().format_time() + " [ERROR] " + input;
     auto str = fmt::format(tmstr, args...);
+    set_color(str, RED);
     std::cout << str << std::endl;
     write_log(str);
   }
@@ -138,6 +147,7 @@ void Logger::infof(std::string_view s, Args... args) {
     string input(s);
     auto tmstr = Timer::get_instance().format_time() + " [INFO] " + input;
     auto str = fmt::format(tmstr, args...);
+    set_color(str, BLUE);
     std::cout << str << std::endl;
     write_log(str);
   }
@@ -149,6 +159,7 @@ void Logger::warningf(std::string_view s, Args... args) {
     string input(s);
     auto tmstr = Timer::get_instance().format_time() + " [WARING] " + input;
     auto str = fmt::format(tmstr, args...);
+    set_color(str, YELLOW);
     std::cout << str << std::endl;
     write_log(str);
   }
@@ -160,6 +171,7 @@ void Logger::debugf(std::string_view s, Args... args) {
     string input(s);
     auto tmstr = Timer::get_instance().format_time() + " [DEBUG] " + input;
     auto str = fmt::format(tmstr, args...);
+    set_color(str, GREEN);
     std::cout << str << std::endl;
     write_log(str);
   }
