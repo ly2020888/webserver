@@ -13,8 +13,8 @@ public:
     auto ptr = make_shared<LoggerConfig>(".", "server.log", 100);
     return ptr;
   }
-  // shared_ptr<ServerConfig> get_default_server_config() {
-  //   auto ptr = make_shared<ServerConfig>(new ServerConfig());
-  //   return ptr;
-  // }
+  shared_ptr<ServerConfig> get_default_server_config() {
+    auto ptr = make_shared<ServerConfig>();
+    return ptr;
+  }
 };
