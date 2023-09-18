@@ -21,12 +21,8 @@ using std::string;
 using std::thread;
 using std::unique_ptr;
 
-// logger 支持 日志等级
-// 日志可以选择 warning  info debug error 四种等级
-// 日志支持文件输出
-// 日志支持文件配置 *
-// 日志支持自定义的错误输出
-// 日志支持打印到屏幕上
+// logger
+
 class Logger;
 class LogWriter {
 

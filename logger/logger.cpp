@@ -33,7 +33,6 @@ void Logger::set_color(string &origin, Color colors) {
   case RED:
     ss << CRED << origin << CRESET;
     break;
-
   case BLUE:
     ss << CBLUE << origin << CRESET;
     break;

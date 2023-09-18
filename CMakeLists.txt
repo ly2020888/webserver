@@ -1,26 +1,23 @@
-cmake_minimum_required(VERSION 3.8)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_EXPORT_COMPILECOMMANDS ON)
-
+cmake_minimum_required(VERSION 3.16)
 project(webapp)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 enable_testing()
 
+# packages
 find_package(fmt REQUIRED)
 
-file(GLOB SRC ${PROJECT_SOURCE_DIR}/*.cpp)
-
+# local variable
 set(INCPATH ${PROJECT_SOURCE_DIR}/inc)
-
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 add_subdirectory("logger")
 add_subdirectory("timer")
 
-include_directories(${INCPATH})
+# executable
+add_executable(webapp)
 
-link_directories(${PROJECT_SOURCE_DIR}/lib)
-
-add_executable(webapp ${SRC})
+# target_
+target_include_directories(webapp PUBLIC ${INCPATH})
+target_sources(webapp PRIVATE main.cpp)
+target_compile_features(webapp PUBLIC cxx_std_20)
+target_link_directories(webapp PRIVATE ${PROJECT_SOURCE_DIR}/lib)
 target_link_libraries(webapp PRIVATE logger)
