@@ -2,6 +2,7 @@
 #include "config.h"
 #include <cassert>
 #include <cstring>
+#include <exception>
 #include <netinet/in.h>
 #include <ranges>
 #include <sys/epoll.h>
@@ -56,19 +57,45 @@ void Server::main_loop() {
     int number = epoll_wait(_epollfd, events.data(), MAX_EVENT_NUMBER, -1);
 
     for (auto i : iota(0, number)) {
-      int client_so_fd = events[i].data.fd;
-      // to-do
+      int client_fd = events[i].data.fd;
+
+      // 注册用户
+      if (client_fd == _listenfd) {
+        register_client();
+        continue;
+      }
+
+      // 出现链接错误。移除用户
+      if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
+        client_set.remove_client(client_fd);
+        logger.infof("client {:x} has been removed.", client_fd);
+        continue;
+      }
+
+      // 读事件
+      if (events[i].events & EPOLLIN) {
+        try {
+          client_set.read_from(client_fd);
+        } catch (const std::exception &e) {
+          logger.errorf("%s", e.what());
+        }
+        continue;
+      }
+
+      if (events[i].events & EPOLLOUT) {
+        try {
+          client_set.write_from(client_fd);
+        } catch (const std::exception &e) {
+          logger.errorf("%s", e.what());
+        }
+        continue;
+      }
     }
   }
-}
 
-bool Server::register_client() {
-  struct sockaddr_in client_address;
-  socklen_t client_addrlength = sizeof(client_address);
-
-  if (server_config->listent_trig_mode) { // Edge-Triggered
-
-  } else { // Level-Triggered
+  bool Server::register_client() {
+    struct sockaddr_in client_address;
+    socklen_t client_addrlength = sizeof(client_address);
     int connfd = accept(_listenfd, (struct sockaddr *)&client_address,
                         &client_addrlength);
     if (connfd < 0) {
@@ -78,8 +105,8 @@ bool Server::register_client() {
 
     logger.infof("The new tcp link has been connected, File descriptor is {:x}",
                  connfd);
-    Client c = Client();
-    c.initialize(connfd, client_address);
-    client_set.register_clinet(std::move(c));
+    auto cp = Client::Create(client_set);
+    cp->initialize(connfd, client_address);
+    client_set.register_client(std::move(cp));
+    return true;
   }
-}

@@ -1,5 +1,6 @@
 test/build
 .vscode 
+.cache
 lib
 bin
 build

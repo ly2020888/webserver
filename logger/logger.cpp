@@ -16,8 +16,7 @@
 
 void Logger::init() {
 
-  ConfigFactroy factory = ConfigFactroy();
-  this->config = factory.get_default_logger_config();
+  this->config = ConfigFactroy::get_default_logger_config();
   this->_level = this->config->log_level;
   this->lw = std::make_shared<LogWriter>("server.log", 1, *this->config);
   lw->background_deamon(); // start deamon thread
