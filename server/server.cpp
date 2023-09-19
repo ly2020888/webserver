@@ -92,21 +92,22 @@ void Server::main_loop() {
       }
     }
   }
+}
 
-  bool Server::register_client() {
-    struct sockaddr_in client_address;
-    socklen_t client_addrlength = sizeof(client_address);
-    int connfd = accept(_listenfd, (struct sockaddr *)&client_address,
-                        &client_addrlength);
-    if (connfd < 0) {
-      logger.errorf("%s:errno is:%d", "accept error", errno);
-      return false;
-    }
-
-    logger.infof("The new tcp link has been connected, File descriptor is {:x}",
-                 connfd);
-    auto cp = Client::Create(client_set);
-    cp->initialize(connfd, client_address);
-    client_set.register_client(std::move(cp));
-    return true;
+bool Server::register_client() {
+  struct sockaddr_in client_address;
+  socklen_t client_addrlength = sizeof(client_address);
+  int connfd =
+      accept(_listenfd, (struct sockaddr *)&client_address, &client_addrlength);
+  if (connfd < 0) {
+    logger.errorf("%s:errno is:%d", "accept error", errno);
+    return false;
   }
+
+  logger.infof("The new tcp link has been connected, File descriptor is {:x}",
+               connfd);
+  auto cp = Client::Create(client_set);
+  cp->initialize(connfd, client_address);
+  client_set.register_client(std::move(cp));
+  return true;
+}
