@@ -1,15 +1,11 @@
 
+#include "config_factory.h"
 #include "logger.h"
-
+#include "server.h"
 int main() {
-  auto &logger = Logger::get_instance();
-  int str = 1;
-  logger.init();
-  logger.set_log_level(DEBUG);
-  logger.infof("The logger is initialized {}", str);
-  logger.warningf("Congratulations! No Warnings");
-  logger.debugf("Congratulations! No Bugs");
-  logger.errorf("Congratulations! No Errors");
-
+  auto conf = ConfigFactroy::get_default_server_config();
+  Server webapp = Server(std::move(conf));
+  webapp.init();
+  webapp.start();
   return 0;
 }

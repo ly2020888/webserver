@@ -9,7 +9,13 @@
 #include <sys/socket.h>
 
 using std::ranges::views::iota;
-
+void Server::init() {
+  logger.init();
+  logger.set_log_level(DEBUG); // optional
+  set_socket();
+  set_epoll();
+}
+void Server::start() { main_loop(); }
 void Server::set_socket() {
 
   // 获取套接字
@@ -37,6 +43,8 @@ void Server::set_socket() {
   // 开启监听
   no_err = listen(_listenfd, server_config->connection_queue_max_size);
   assert(no_err >= 0);
+
+  logger.infof("The server listens on local port {}", server_config->port);
 }
 
 // 设置epoll对象，size指明epoll对象可以同时处理的文件描述符
@@ -53,6 +61,7 @@ void Server::set_epoll() {
 }
 
 void Server::main_loop() {
+  logger.infof("The server starts on file descriptor {:x}.", _listenfd);
   while (true) {
     int number = epoll_wait(_epollfd, events.data(), MAX_EVENT_NUMBER, -1);
 
@@ -77,7 +86,7 @@ void Server::main_loop() {
         try {
           client_set.read_from(client_fd);
         } catch (const std::exception &e) {
-          logger.errorf("%s", e.what());
+          logger.errorf("{}", e.what());
         }
         continue;
       }
@@ -86,7 +95,7 @@ void Server::main_loop() {
         try {
           client_set.write_from(client_fd);
         } catch (const std::exception &e) {
-          logger.errorf("%s", e.what());
+          logger.errorf("{}", e.what());
         }
         continue;
       }
@@ -100,13 +109,13 @@ bool Server::register_client() {
   int connfd =
       accept(_listenfd, (struct sockaddr *)&client_address, &client_addrlength);
   if (connfd < 0) {
-    logger.errorf("%s:errno is:%d", "accept error", errno);
+    logger.errorf("Accept error errno is:{}", errno);
     return false;
   }
 
   logger.infof("The new tcp link has been connected, File descriptor is {:x}",
                connfd);
-  auto cp = Client::Create(client_set);
+  auto cp = Client::Create(client_set, _epollfd);
   cp->initialize(connfd, client_address);
   client_set.register_client(std::move(cp));
   return true;

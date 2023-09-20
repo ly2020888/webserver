@@ -15,7 +15,6 @@ using ClientPtr = std::unique_ptr<Client>;
 class Client {
 public:
   // static void set_trigger_mode(int mode) { trigger_mode = mode; }
-  static void set_epoll_fd(int fd) { _epollfd = fd; }
 
   int get_connfd();
   void client_epoll_ctl();
@@ -30,17 +29,18 @@ public:
     this->client_address = client_address;
   }
 
-  static ClientPtr Create(Clients &belongs, int buffer_size = 2 * KB) {
+  static ClientPtr Create(Clients &belongs, int epollfd,
+                          int buffer_size = 2 * KB) {
     return std::make_unique<Client>(belongs, buffer_size);
   }
 
-  Client(Clients &belongs, int buffer_size = 2 * KB)
+  Client(Clients &belongs, int epollfd, int buffer_size = 2 * KB)
       : read_buffer(buffer_size), write_buffer(buffer_size),
-        _collection(belongs) {}
+        _collection(belongs), _epollfd(epollfd) {}
 
 private:
   // static int trigger_mode;
-  static int _epollfd;
+  int _epollfd;
   int connfd;
   Buffer read_buffer;
   Buffer write_buffer;
@@ -54,6 +54,7 @@ public:
   void remove_client(int connfd);
   void read_from(int connfd);
   void write_from(int connfd);
+  void close_all();
 
 private:
   unordered_map<int, ClientPtr> collection;

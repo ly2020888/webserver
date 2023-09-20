@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <fmt/core.h>
 #include <sys/epoll.h>
+#include <unistd.h>
 
 // 客户端
 int Client::get_connfd() { return connfd; }
@@ -87,6 +88,7 @@ void Clients::remove_client(int connfd) {
 
 void Clients::register_client(ClientPtr cp) {
   int connfd = cp->get_connfd();
+  cp->client_epoll_ctl();
   collection[connfd] = std::move(cp);
   connfds.insert(connfd);
 }
@@ -105,4 +107,11 @@ void Clients::write_from(int connfd) {
   } catch (const std::exception &e) {
     throw e;
   }
+}
+void Clients::close_all() {
+  for (auto &client : connfds) {
+    close(client);
+  }
+  connfds.clear();
+  collection.clear();
 }

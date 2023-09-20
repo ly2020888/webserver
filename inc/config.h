@@ -48,9 +48,9 @@ public:
 
   int connection_queue_max_size; // socket上等待连接队列的最大长度
 
-  ServerConfig() = delete;
+  ServerConfig();
 
-  explicit ServerConfig(int mode = 0, int sql_thread_num = 4,
+  explicit ServerConfig(int mode, int sql_thread_num = 4,
                         int worker_thread_num = 8,
                         int connection_queue_max_size = 10, int port = 6060) {
     this->mode = mode;

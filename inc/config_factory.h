@@ -14,7 +14,7 @@ public:
     return ptr;
   }
   static shared_ptr<ServerConfig> get_default_server_config() {
-    auto ptr = make_shared<ServerConfig>();
+    auto ptr = make_shared<ServerConfig>(0);
     return ptr;
   }
 };
