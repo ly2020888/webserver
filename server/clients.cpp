@@ -13,11 +13,7 @@ struct sockaddr_in Client::get_socket() { return client_address; }
 void Client::client_epoll_ctl() {
   epoll_event event;
   event.data.fd = connfd;
-
-  // if (trigger_mode)
   event.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
-  // else
-  // event.events = EPOLLIN | EPOLLRDHUP;
 
   epoll_ctl(_epollfd, EPOLL_CTL_ADD, connfd, &event);
 

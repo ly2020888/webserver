@@ -14,7 +14,11 @@ public:
     return ptr;
   }
   static shared_ptr<ServerConfig> get_default_server_config() {
-    auto ptr = make_shared<ServerConfig>(0);
+    auto ptr = make_shared<ServerConfig>();
+    return ptr;
+  }
+  static shared_ptr<ThreadPoolConfig> get_default_threadpool_config() {
+    auto ptr = make_shared<ThreadPoolConfig>();
     return ptr;
   }
 };

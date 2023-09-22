@@ -1,3 +1,4 @@
+#pragma once
 #include "clients.h"
 #include "config.h"
 #include "logger.h"

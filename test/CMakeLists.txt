@@ -4,13 +4,13 @@ set(CMAKE_C_COMPILER "/usr/bin/clang")
 set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 project(testWeb)
 
-file(GLOB SRC ${PROJECT_SOURCE_DIR}/*.cpp)
+file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 find_package(fmt REQUIRED)
 
 enable_testing()
-include_directories(${PROJECT_SOURCE_DIR}/../inc)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../inc)
 
-link_directories(${PROJECT_SOURCE_DIR}/../lib)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../lib)
 
 add_executable(testWeb ${SRC})
 target_link_libraries(testWeb PUBLIC

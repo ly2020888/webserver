@@ -31,7 +31,7 @@ public:
 
   static ClientPtr Create(Clients &belongs, int epollfd,
                           int buffer_size = 2 * KB) {
-    return std::make_unique<Client>(belongs, buffer_size);
+    return std::make_unique<Client>(belongs, epollfd, buffer_size);
   }
 
   Client(Clients &belongs, int epollfd, int buffer_size = 2 * KB)

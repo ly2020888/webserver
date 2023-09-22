@@ -17,3 +17,24 @@ public:
 private:
   string errorMessage;
 };
+
+class HttpRequestParseException : public std::runtime_error {
+public:
+  enum class ErrorCode {
+    InvalidRequestLine,
+    InvalidHeader,
+    InvalidMethod,
+    InvalidUri,
+    InvalidVersion,
+    MissingHostHeader,
+    Other
+  };
+
+  HttpRequestParseException(ErrorCode code, const std::string &message)
+      : std::runtime_error(message), error_code_(code) {}
+
+  ErrorCode GetErrorCode() const { return error_code_; }
+
+private:
+  ErrorCode error_code_;
+};
