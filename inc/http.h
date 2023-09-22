@@ -1,15 +1,19 @@
 #pragma once
+#include <ranges>
 #include <string>
 #include <unordered_map>
 #include <vector>
 using std::string;
+using std::unordered_map;
+using std::vector;
 // HTTP方法名
 enum METHOD { GET = 0, POST, HEAD, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATH };
 // 主状态机状态，检查请求报文中元素
 enum CHECK_STATE {
   CHECK_STATE_REQUESTLINE = 0,
   CHECK_STATE_HEADER,
-  CHECK_STATE_CONTENT
+  CHECK_STATE_CONTENT,
+  END
 };
 // HTTP状态码
 enum HTTP_CODE {
@@ -35,6 +39,7 @@ struct HttpHeader {
 struct HttpBody {
   std::string contentType; // 内容类型（例如：text/html）
   std::string content;     // 实际内容
+  unordered_map<std::string, std::string> content_kv;
 };
 
 struct HttpRequest {
@@ -52,15 +57,17 @@ struct HttpResponse {
 
 class HttpParser {
 public:
-  HttpRequest parse(string metadata);
+  HttpRequest parse(string &&metadata);
+  // 主状态机解析报文中的请求行数据
   void parse_request_line(const string &text, HttpRequest &req);
+  // 主状态机解析报文中的请求头数据
+  void
+  parse_request_headers(const string &text,
+                        std::unordered_map<std::string, std::string> &headers);
+  // 主状态机解析报文中的请求内容
+  void parse_request_content(string &&text, HttpRequest &req);
 
 private:
-  int matching_state = -1;
   std::vector<string> spilt(const string &text, char delimiter);
-  // 主状态机解析报文中的请求行数据
-  // 主状态机解析报文中的请求头数据
-  void parse_request_headers(const string &text, HttpRequest &req);
-  // 主状态机解析报文中的请求内容
-  void parse_request_content(const string &text, HttpRequest &req);
+  CHECK_STATE matching_state;
 };
