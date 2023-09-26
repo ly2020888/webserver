@@ -71,8 +71,9 @@ public:
   void parse_request_content(string &&text, HttpRequest &req);
 
 private:
-  void multipart_form_data(const string &text, const string &boundary,
-                           HttpRequest &req);
   CHECK_STATE matching_state;
   Logger &logger = Logger::get_instance();
+
+  void multipart_form_data(const string &text, const string &boundary,
+                           HttpRequest &req);
 };

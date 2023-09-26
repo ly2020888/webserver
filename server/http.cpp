@@ -24,6 +24,7 @@ POST /api/users HTTP/1.1
 Host: www.example.com
 Content-Type: application/json
 Content-Length: 45
+
 {
   "username": "exampleuser",
   "email": "user@example.com"
