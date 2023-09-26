@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.8)
+project(util)
+file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+include_directories(${INCPATH})
+add_library(util ${SRC})

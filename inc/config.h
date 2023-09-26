@@ -18,7 +18,7 @@ public:
   string file_path;   // 路径名
   string logger_name; // log文件名
   int max_lines;      // 日志最大行数
-  LEVEL log_level = INFO;
+  LEVEL log_level = DEBUG;
   void set_level(LEVEL log_level) { this->log_level = log_level; }
   LoggerConfig() = delete;
 
