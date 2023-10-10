@@ -1,5 +1,7 @@
+#pragma once
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include <vector>
 using std::vector;
 class Buffer {
@@ -12,7 +14,10 @@ public:
       buffer_[cursor_++] = data[i];
     }
   }
-
+  std::string as_str() {
+    std::string str(buffer_.data(), buffer_.size());
+    return str;
+  }
   void write(size_t size) {
     ensure_capacity(size);
     cursor_ += size;
@@ -43,7 +48,6 @@ private:
     return data;
   }
 
-private:
   vector<char> buffer_;
   size_t cursor_;
 };

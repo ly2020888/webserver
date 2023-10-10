@@ -1,8 +1,11 @@
 #include "server.h"
 #include "config.h"
+#include "config_factory.h"
+#include "threadpool.h"
 #include <cassert>
 #include <cstring>
 #include <exception>
+#include <memory>
 #include <netinet/in.h>
 #include <ranges>
 #include <sys/epoll.h>
@@ -14,6 +17,11 @@ void Server::init() {
   logger.set_log_level(DEBUG); // optional
   set_socket();
   set_epoll();
+
+  // start thread pool
+  auto thread_pool_config = ConfigFactroy::get_default_threadpool_config();
+  thread_pool = ThreadPool::create(thread_pool_config);
+  thread_pool->start();
 }
 void Server::start() { main_loop(); }
 void Server::set_socket() {
@@ -83,11 +91,14 @@ void Server::main_loop() {
 
       // 读事件
       if (events[i].events & EPOLLIN) {
-        try {
-          client_set.read_from(client_fd);
-        } catch (const std::exception &e) {
-          logger.errorf("{}", e.what());
-        }
+        auto handle_request = [&, this]() {
+          try {
+            client_set.read_from(client_fd);
+          } catch (const std::exception &e) {
+            logger.errorf("{}", e.what());
+          }
+        };
+        thread_pool->add_job(handle_request);
         continue;
       }
 

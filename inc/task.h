@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -12,12 +13,17 @@ class Task {
 public:
   template <typename Func, typename... Args>
   Task(Func &&func, Args &&...args)
-      : _func(
-            std::bind(std::forward<Func>(func), std::forward<Args>(args)...)) {}
+      : exit(false), _func(std::bind(std::forward<Func>(func),
+                                     std::forward<Args>(args)...)) {}
 
-  void exec() { _func(); }
+  bool exec() {
+    _func();
+    return exit.load();
+  }
+  void exit_after() { exit = true; }
 
 private:
+  std::atomic<bool> exit;
   function<void()> _func;
 };
 

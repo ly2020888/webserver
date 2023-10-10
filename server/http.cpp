@@ -131,6 +131,11 @@ void HttpParser::parse_request_content(string &&text, HttpRequest &req) {
   matching_state = END;
 }
 
+// parse will clear the buffer
+HttpRequest HttpParser::parse(Buffer &metadata) {
+  string inner = metadata.as_str();
+  return parse(std::move(inner));
+}
 HttpRequest HttpParser::parse(string metadata) {
   HttpRequest request;
   matching_state = CHECK_STATE_REQUESTLINE;

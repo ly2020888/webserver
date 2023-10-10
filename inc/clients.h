@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include "http.h"
 #include <memory>
 #include <netinet/in.h>
 #include <unordered_map>
@@ -19,6 +20,8 @@ public:
   int get_connfd();
   void client_epoll_ctl();
   void read_once();
+  void handle_request();
+
   void write_once();
   void pay_attention_to(int epollout);
   void disconnect();

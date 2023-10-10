@@ -1,5 +1,6 @@
 #include "clients.h"
 #include "errors.h"
+#include "http.h"
 #include <fcntl.h>
 #include <fmt/core.h>
 #include <sys/epoll.h>
@@ -46,6 +47,13 @@ void Client::read_once() {
     }
   }
 }
+void Client::handle_request() {
+  HttpParser parser = HttpParser();
+  HttpRequest request = parser.parse(read_buffer);
+  read_buffer.clear();
+  // router -> route(request)
+}
+
 void Client::disconnect() { _collection.remove_client(connfd); }
 
 void Client::write_once() {

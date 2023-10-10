@@ -2,6 +2,7 @@
 #include "clients.h"
 #include "config.h"
 #include "logger.h"
+#include "threadpool.h"
 #include <array>
 #include <sys/epoll.h>
 #include <sys/socket.h>
@@ -32,6 +33,7 @@ private:
   Logger &logger = Logger::get_instance();
   Clients client_set;
   ServerConfigPtr server_config;
+  shared_ptr<ThreadPool> thread_pool;
   array<struct epoll_event, MAX_EVENT_NUMBER> events;
 
   int _epollfd;  // epoll对象

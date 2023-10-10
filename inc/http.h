@@ -1,4 +1,5 @@
 #pragma once
+#include "buffer.h"
 #include "logger.h"
 #include <nlohmann/json.hpp>
 #include <ranges>
@@ -61,6 +62,7 @@ struct HttpResponse {
 class HttpParser {
 public:
   HttpRequest parse(string metadata);
+  HttpRequest parse(Buffer &metadata);
   // 主状态机解析报文中的请求行数据
   void parse_request_line(const string &text, HttpRequest &req);
   // 主状态机解析报文中的请求头数据
